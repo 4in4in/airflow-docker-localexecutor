@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: "postgres:12"
+    environment:
+      PGUSER: "airflow"
+      POSTGRES_USER: "airflow"
+      POSTGRES_PASSWORD: "airflow"
+      POSTGRES_DB: "airflow"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+
+  webserver:
+    build:
+      context: "${PWD}/webserver"
+    restart: always
+    depends_on:
+      - "postgres"
+    environment:
+      AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@postgres/airflow"
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@postgres/airflow"
+      AIRFLOW__CELERY__RESULT_BACKEND: "db+postgresql://airflow:airflow@postgres/airflow"
+    volumes:
+      # - "${PWD}/volumes/webserver/airflow.cfg:/opt/airflow/airflow.cfg"
+      - "${PWD}/volumes/webserver/dags:/opt/airflow/dags"
+      # - "${PWD}/volumes/webserver/plugins:/opt/airflow/plugins"
+    ports:
+      - "8080:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /opt/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3

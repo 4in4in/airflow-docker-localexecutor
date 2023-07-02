@@ -1,0 +1,9 @@
+pandas==1.4.2
+numpy==1.21.5
+torch==1.11.0
+dgl==0.9.1
+rdkit==2022.3.3
+fitz==0.0.1.dev2
+nltk==3.7
+epam.indigo==1.7.4
+beautifulsoup4==4.12.2
