@@ -6,5 +6,12 @@ RUN pip install --no-cache-dir --user -r /tmp/pip-requirements.txt
 
 ADD entrypoint.sh /entrypoint.sh
 
+USER root
+
+RUN apt update && apt install -y openjdk-11-jre-headless wget
+RUN mkdir /data && wget -O /data/converter.jar https://github.com/dan2097/opsin/releases/download/2.7.0/opsin-cli-2.7.0-jar-with-dependencies.jar
+
+USER airflow
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"]
