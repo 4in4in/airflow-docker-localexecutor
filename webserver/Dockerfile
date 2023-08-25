@@ -13,5 +13,7 @@ RUN mkdir /data && wget -O /data/converter.jar https://github.com/dan2097/opsin/
 
 USER airflow
 
+RUN python -m nltk.downloader punkt
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"]
